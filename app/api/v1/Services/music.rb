@@ -7,7 +7,8 @@ module V1
           if(song)
             {message: "Song exists"}
           else
-            Song.create(name: name, singer: singer, url: url,user: user, rating:rating)
+            song=Song.create(name: name, singer: singer, url: url,user: user, rating:rating)
+            V1::Helper::Redishelper.get_set(song.id,song,false,"music",86400)
             {message: "Song was created"}
           end
 
@@ -22,7 +23,13 @@ module V1
         end
 
         def get_song(id)
-          song=Song.find_by(id)
+          song=V1::Helper::Redishelper.get_set(song.id,song,true,"music",86400)
+          if song
+            song
+          else
+            song=Song.find_by(id:id);
+
+          end
         end
 
         def get_all_songs()

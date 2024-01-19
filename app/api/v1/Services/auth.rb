@@ -1,26 +1,31 @@
+require_relative '../Helper/redishelper'
+
 module V1
   module Services
     class Auth
       class << self
         def signup(name,email,password)
-          existing_user=User.find(email: email)
+          existing_user=User.find_by(email: email)
           if(existing_user)
             {error: "Email is already taken"}
           else
-            user=User.create(name:name, email: email, password:hash_password(password))
-            token=generate_token(user) #generate and hash password token is a private function
-            {token: token}
+            V1::Helper::Redishelper.get_set(0,false,"user",86400)do
+              user=User.create(name:name, email: email, password_digest:hash_password(password))
+              token=generate_token(user)
+              {id:user.id, token:token}
+            end
           end
         end
         def login (email,password)
-          user=User.find_by(email: email)
-          if user && BCrypt::Password.new(User.password)==hash_password(password)
-            token=generate_token(user)
-            { token: token }
-          else
-            {error: "Invalid email or password"}
+          user= User.find_by(email:email)
+          if user && BCrypt::Password.new(user.password_digest)==password
+            V1::Helper::Redishelper.get_set(user.id,true,"user",86400)do
+              token=generate_token(user)
+              {id:user.id,token:token}
+            end
           end
         end
+
         private
         def generate_token(user)
           "#{user.email}-#{SecureRandom.hex(16)}"
