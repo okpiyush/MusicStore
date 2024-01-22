@@ -20,9 +20,6 @@ class BASE < Grape::API
     #API endpoint for Likes
 
 
-    #API endpoint for follows
-    mount V1::Follow
-
 
     #API endpoint for data and followups
 
