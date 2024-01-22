@@ -19,11 +19,6 @@ module V1
       V1::Services::Auth.login(params[:email],params[:password])
     end
 
-    params  do
-      requires :token, type: String
-    end
-    post "auth" do
-      V1::Services::Auth.authenticate(params[:token])
-    end
+
   end
 end

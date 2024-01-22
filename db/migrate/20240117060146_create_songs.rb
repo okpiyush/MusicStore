@@ -5,7 +5,7 @@ class CreateSongs < ActiveRecord::Migration[6.1]
       t.string :singer
       t.string :url
       t.float :rating
-      t.numeric :user
+      t.integer :user_id
 
       t.timestamps
     end

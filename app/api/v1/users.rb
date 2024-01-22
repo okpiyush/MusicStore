@@ -1,12 +1,12 @@
 module V1
-  class USERS<Grape::API
+class USERS<Grape::API
       desc "This is to get all the users"
       get do
           User.all
       end
 
       desc "this is to get all details of a specific user"
-      post do
+      post "follow"do
 
       end
 
